@@ -1,6 +1,13 @@
 ﻿public class DriveData
 {
-    public float SecondsPerFrame;
+    public FrameCollection<PositionFrame> PositionFrames;
 
-    public Frame[] Frames;
+    public FrameCollection<SpeedFrame> SpeedFrames;
+
+    public FrameCollection<AccelerationFrame> AccelerationFrames;
+
+    public float GetDuration()
+    {
+        return UnityEngine.Mathf.Max(PositionFrames.GetDuration(), SpeedFrames.GetDuration(), AccelerationFrames.GetDuration());
+    }
 }

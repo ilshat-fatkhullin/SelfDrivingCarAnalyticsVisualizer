@@ -15,6 +15,8 @@ public class EventBus: MonoBehaviour
 
     public CurrentWaypointChangeEvent OnCurrentWaypointChange;
 
+    public FileLoadingEvent OnFileLoad;
+
     void Awake()
     {
         OnDataLoad = new DataLoadingEvent();
@@ -22,6 +24,7 @@ public class EventBus: MonoBehaviour
         OnTimelineValueChange = new TimelineValueChangeEvent();
         OnWaypointsUpdate = new WaypointsUpdateEvent();
         OnCurrentWaypointChange = new CurrentWaypointChangeEvent();
+        OnFileLoad = new FileLoadingEvent();
     }
 }
 
@@ -34,3 +37,5 @@ public class TimelineValueChangeEvent : UnityEvent<float> { }
 public class WaypointsUpdateEvent : UnityEvent<Vector3[]> { }
 
 public class CurrentWaypointChangeEvent : UnityEvent<Vector3> { }
+
+public class FileLoadingEvent: UnityEvent<string> { }

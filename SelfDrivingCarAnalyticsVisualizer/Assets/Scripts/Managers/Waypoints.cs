@@ -2,13 +2,7 @@
 
 public class Waypoints : MonoBehaviour
 {
-    [Range(0.25f, 2f)]
-    [SerializeField]
-    private float _step;
-
-    private float _secondsPerFrame;
-
-    private SplineBuilder _splineBuilder;
+    private FrameCollection<PositionFrame> _frames;
 
     private void Start()
     {
@@ -18,29 +12,21 @@ public class Waypoints : MonoBehaviour
 
     private void OnDataLoaded(DriveData driveData)
     {
-        _secondsPerFrame = driveData.SecondsPerFrame;
+        _frames = driveData.PositionFrames;
 
-        Vector3[] positions = new Vector3[driveData.Frames.Length];
+        Vector3[] positions = new Vector3[driveData.PositionFrames.Frames.Length];
 
         for (int i = 0; i < positions.Length; i++)
         {
-            Frame frame = driveData.Frames[i];
-            positions[i] = new Vector3(frame.X, frame.Y, frame.Z);
+            positions[i] = driveData.PositionFrames.Frames[i].ToVector();
         }
 
-        SetWaypoints(positions);
-
-        EventBus.Instance.OnCurrentWaypointChange.Invoke(_splineBuilder.GetSplineAtTime(0));
-    }
-
-    private void SetWaypoints(Vector3[] positions)
-    {
-        _splineBuilder = new SplineBuilder(positions);
-        EventBus.Instance.OnWaypointsUpdate.Invoke(_splineBuilder.GetSplinePoints(positions, _step));
+        EventBus.Instance.OnWaypointsUpdate.Invoke(positions);
+        EventBus.Instance.OnCurrentWaypointChange.Invoke(positions[0]);
     }
 
     private void OnTimelineValueChanged(float value)
     {
-        EventBus.Instance.OnCurrentWaypointChange.Invoke(_splineBuilder.GetSplineAtTime(value / _secondsPerFrame));
+        EventBus.Instance.OnCurrentWaypointChange.Invoke(_frames.GetFrameAtTime(value).ToVector());
     }
 }

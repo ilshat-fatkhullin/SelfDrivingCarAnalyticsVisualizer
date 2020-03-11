@@ -11,7 +11,7 @@ public class Timeline : MonoBehaviour
 
     private void OnDataLoaded(DriveData driveData)
     {
-        _duration = driveData.SecondsPerFrame * (driveData.Frames.Length - 1);
+        _duration = driveData.GetDuration();
         EventBus.Instance.OnTimelineChangeEvent.Invoke(_duration);
     }
 }

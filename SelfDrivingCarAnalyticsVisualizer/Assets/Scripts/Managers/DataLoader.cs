@@ -7,18 +7,28 @@ public class DataLoader : MonoBehaviour
 {
     public void LoadData()
     {
-        DriveData driveData = ReadFile();
+        string fileName = SelectFile();
+        if (fileName == null)
+        {
+            return;
+        }
+
+        DriveData driveData = ReadJsonFile(fileName);
 
         if (driveData == null)
+        {
             Debug.Log("Cannot read the file.");
+            return;
+        }
 
+        EventBus.Instance.OnFileLoad.Invoke(fileName);
         EventBus.Instance.OnDataLoad.Invoke(driveData);
     }
 
-    private DriveData ReadFile()
+    private string SelectFile()
     {
         var extensions = new[] {
-            new ExtensionFilter("Data Files", "json" )
+            new ExtensionFilter("Data Files", "csv", "json")
         };
 
         string[] paths = StandaloneFileBrowser.OpenFilePanel("Open data file...", "", extensions, false);
@@ -26,9 +36,14 @@ public class DataLoader : MonoBehaviour
         if (paths.Length == 0)
             return null;
 
+        return paths[0];
+    }
+
+    private DriveData ReadJsonFile(string fileName)
+    {
         string dataString;
 
-        using (StreamReader reader = new StreamReader(paths[0]))
+        using (StreamReader reader = new StreamReader(fileName))
         {
             dataString = reader.ReadToEnd();
         }
