@@ -37,18 +37,11 @@ public class TimelineLabels : MonoBehaviour
         for (int i = 0; i < _labelsCount; i++)
         {
             GameObject label = Instantiate(_timelineLabel, transform);
-            label.GetComponent<Text>().text = GetTimelineLabelFromTime(time);
+            label.GetComponent<Text>().text = DateTimeHelper.GetTimelineLabelFromTime(time);
             label.GetComponent<RectTransform>().anchoredPosition = 
                 new Vector2(Mathf.Lerp(0, _rectTransform.rect.width, time / duration), 0);
             _timelineLabels.Add(label);
             time += step;
         }
-    }
-
-    private string GetTimelineLabelFromTime(float time)
-    {
-        int seconds = Mathf.FloorToInt(time % 60);
-        int minutes = Mathf.FloorToInt(time / 60);
-        return string.Format("{0:D2}", minutes) + ":" + string.Format("{0:D2}", seconds);
     }
 }

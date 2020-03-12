@@ -2,12 +2,18 @@
 {
     public FrameCollection<PositionFrame> PositionFrames;
 
-    public FrameCollection<SpeedFrame> SpeedFrames;
+    public FrameCollection<SingleValueFrame> SpeedFrames;
 
-    public FrameCollection<AccelerationFrame> AccelerationFrames;
+    public FrameCollection<SingleValueFrame> AccelerationFrames;
+
+    public FrameCollection<SingleValueFrame> PerceptionFrames;
 
     public float GetDuration()
     {
-        return UnityEngine.Mathf.Max(PositionFrames.GetDuration(), SpeedFrames.GetDuration(), AccelerationFrames.GetDuration());
+        return UnityEngine.Mathf.Max(
+            PositionFrames.GetDuration(), 
+            SpeedFrames.GetDuration(), 
+            AccelerationFrames.GetDuration(),
+            PerceptionFrames.GetDuration());
     }
 }
