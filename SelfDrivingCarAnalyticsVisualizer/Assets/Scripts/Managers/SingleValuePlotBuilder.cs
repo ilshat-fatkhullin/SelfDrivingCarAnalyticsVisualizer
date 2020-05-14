@@ -22,7 +22,7 @@ public class SingleValuePlotBuilder : MonoBehaviour
         {            
             _lineChart.AddData(0, time, data.Frames[i].Value);
             _lineChart.AddXAxisData(DateTimeHelper.GetTimelineLabelFromTime(time));
-            time += data.Frequency;
+            time = data.Frames[i].Timestamp;
         }
         _lineChart.RefreshChart();
     }

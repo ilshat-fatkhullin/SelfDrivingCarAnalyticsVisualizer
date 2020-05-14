@@ -12,13 +12,18 @@ public class Waypoints : MonoBehaviour
 
     private void OnDataLoaded(DriveData driveData)
     {
+        if (driveData.PositionFrames == null)
+        {
+            return;
+        }
+
         _frames = driveData.PositionFrames;
 
         Vector3[] positions = new Vector3[driveData.PositionFrames.Frames.Length];
 
         for (int i = 0; i < positions.Length; i++)
         {
-            positions[i] = driveData.PositionFrames.Frames[i].ToVector();
+            positions[i] = driveData.PositionFrames.Frames[i].Point.ToVector();
         }
 
         EventBus.Instance.OnWaypointsUpdate.Invoke(positions);
@@ -27,6 +32,6 @@ public class Waypoints : MonoBehaviour
 
     private void OnTimelineValueChanged(float value)
     {
-        EventBus.Instance.OnCurrentWaypointChange.Invoke(_frames.GetFrameAtTime(value).ToVector());
+        EventBus.Instance.OnCurrentWaypointChange.Invoke(_frames.GetNormalizedFrameAtTime(value).Point.ToVector());
     }
 }

@@ -7,7 +7,7 @@ public class DataLoader : MonoBehaviour
 {
     public void LoadData()
     {
-        string fileName = SelectFile();
+        string fileName = FileSelectionHelper.SelectFile(new ExtensionFilter("Data Files", "json"));
         if (fileName == null)
         {
             return;
@@ -23,21 +23,7 @@ public class DataLoader : MonoBehaviour
 
         EventBus.Instance.OnFileLoad.Invoke(fileName);
         EventBus.Instance.OnDataLoad.Invoke(driveData);
-    }
-
-    private string SelectFile()
-    {
-        var extensions = new[] {
-            new ExtensionFilter("Data Files", "csv", "json")
-        };
-
-        string[] paths = StandaloneFileBrowser.OpenFilePanel("Open data file...", "", extensions, false);
-
-        if (paths.Length == 0)
-            return null;
-
-        return paths[0];
-    }
+    }    
 
     private DriveData ReadJsonFile(string fileName)
     {
