@@ -1,4 +1,6 @@
-﻿public class DriveData
+﻿using System.Numerics;
+
+public class DriveData
 {
     public FrameCollection<PositionFrame> PositionFrames;
 

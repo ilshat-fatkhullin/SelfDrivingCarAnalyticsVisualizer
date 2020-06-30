@@ -3,89 +3,23 @@ using UnityEngine;
 
 public class SplineBuilder
 {
-    private readonly Vector3[,] coefficients;
+    private Vector3[,] coefficients;
 
-    private float[] distanceBetweenPoints;
-
-    public float FlightTime { get; private set; }
+    private Vector3[] points;
 
     public SplineBuilder(Vector3[] points)
     {
-        distanceBetweenPoints = new float[points.Length - 1];
-
-        for (int i = 0; i < distanceBetweenPoints.Length; i++)
-        {
-            distanceBetweenPoints[i] = Vector3.Distance(points[i], points[i + 1]);
-            FlightTime += distanceBetweenPoints[i];
-        }
-
         coefficients = CalculateCoefficients(points);
+        this.points = points;
     }
 
-    public bool IsFinishedAtTime(float t)
+    public Vector3[] GetSplinePoints(float step)
     {
-        int i = 0;
-        while (i < distanceBetweenPoints.Length && distanceBetweenPoints[i] < t)
-        {
-            t -= distanceBetweenPoints[i];
-            i++;
-        }
-        return i == distanceBetweenPoints.Length;
-    }
-
-    public Vector3 GetPositionAtTime(float t)
-    {
-        int splineIndex = 0;
-        while (distanceBetweenPoints[splineIndex] < t)
-        {
-            t -= distanceBetweenPoints[splineIndex];
-            splineIndex++;
-        }
-
-        t /= distanceBetweenPoints[splineIndex];
-
-        return coefficients[splineIndex, 0] + coefficients[splineIndex, 1] * t + coefficients[splineIndex, 2] * t * t + coefficients[splineIndex, 3] * t * t * t;
-    }
-
-    public Vector3 GetSpeedAtTime(float t)
-    {
-        int splineIndex = 0;
-        while (distanceBetweenPoints[splineIndex] < t)
-        {
-            t -= distanceBetweenPoints[splineIndex];
-            splineIndex++;
-        }
-
-        t /= distanceBetweenPoints[splineIndex];
-
-        return coefficients[splineIndex, 1] + 2 * coefficients[splineIndex, 2] * t + 3 * coefficients[splineIndex, 3] * t * t;
-    }
-
-    public Vector2[] GetSplinePoints(Vector2[] points, float step)
-    {
-        Vector3[] points3d = new Vector3[points.Length];
-        for (int i = 0; i < points.Length; i++)
-        {
-            points3d[i] = points[i];
-        }
-        Vector3[] result3D = GetSplinePoints(points3d, step);
-        Vector2[] result2D = new Vector2[result3D.Length];
-        for (int i = 0; i < result3D.Length; i++)
-        {
-            result2D[i] = result3D[i];
-        }
-        return result2D;
-    }
-
-    public Vector3[] GetSplinePoints(Vector3[] points, float step)
-    {
-        Vector3[,] coefficients = CalculateCoefficients(points);
-
         List<Vector3> spline = new List<Vector3>();
 
         float t = 0;
 
-        for (int i = 0; i < points.Length - 1; i++)
+        for (int i = 0; i < coefficients.GetLength(0) - 1; i++)
         {
             while (t < i + 1)
             {

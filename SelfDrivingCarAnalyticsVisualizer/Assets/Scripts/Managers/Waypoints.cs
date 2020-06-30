@@ -2,7 +2,12 @@
 
 public class Waypoints : MonoBehaviour
 {
-    private FrameCollection<PositionFrame> _frames;
+    [SerializeField]
+    private float splineStep;
+
+    private FrameCollection<PositionFrame> _frames;    
+
+    private SplineBuilder splineBuilder;
 
     private void Start()
     {
@@ -26,12 +31,15 @@ public class Waypoints : MonoBehaviour
             positions[i] = driveData.PositionFrames.Frames[i].Point.ToVector();
         }
 
-        EventBus.Instance.OnWaypointsUpdate.Invoke(positions);
+        splineBuilder = new SplineBuilder(positions);
+
+        EventBus.Instance.OnWaypointsUpdate.Invoke(splineBuilder.GetSplinePoints(splineStep));
         EventBus.Instance.OnCurrentWaypointChange.Invoke(positions[0]);
     }
 
     private void OnTimelineValueChanged(float value)
     {
-        EventBus.Instance.OnCurrentWaypointChange.Invoke(_frames.GetNormalizedFrameAtTime(value).Point.ToVector());
+        float splineTime = _frames.GetSplineTimeAtNormalizedTime(value);
+        EventBus.Instance.OnCurrentWaypointChange.Invoke(splineBuilder.GetSplineAtTime(splineTime));
     }
 }

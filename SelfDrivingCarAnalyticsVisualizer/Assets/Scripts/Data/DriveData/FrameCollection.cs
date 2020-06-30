@@ -1,7 +1,4 @@
-﻿using UnityEngine;
-using UnityEngine.XR;
-
-public class FrameCollection<T> where T: Frame
+﻿public class FrameCollection<T> where T: Frame
 {
     public T[] Frames;
 
@@ -10,7 +7,7 @@ public class FrameCollection<T> where T: Frame
         return Frames[Frames.Length - 1].Timestamp - Frames[0].Timestamp;
     }
 
-    public T GetNormalizedFrameAtTime(float time)
+    public T GetFrameAtNormalizedTime(float time)
     {
         time += Frames[0].Timestamp;
         return GetFrameAtTime(time);
@@ -47,5 +44,29 @@ public class FrameCollection<T> where T: Frame
         mid = (high + low) / 2;
 
         return Frames[mid];
+    }
+
+    public float GetSplineTimeAtNormalizedTime(float time)
+    {
+        time += Frames[0].Timestamp;
+        return GetSplineTimeAtTime(time);
+    }
+
+    public float GetSplineTimeAtTime(float time)
+    {
+        if (Frames == null || Frames.Length == 0 || time < 0)
+            return 0;
+
+        if (Frames.Length == 1)
+            return 0;
+
+        int low = 0;
+
+        while (Frames[low + 1].Timestamp < time)
+        {
+            low++;
+        }
+
+        return low + (time - Frames[low].Timestamp) / (Frames[low + 1].Timestamp - Frames[low].Timestamp);
     }
 }
