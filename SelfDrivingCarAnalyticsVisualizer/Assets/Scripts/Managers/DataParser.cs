@@ -41,6 +41,7 @@ public class DataParser : MonoBehaviour
 
         driveData.PositionFrames = ParsePositionFrames(fileName);
         driveData.PointCloudFrames = ParsePointCloudFrames(fileName);
+        //driveData.PointCloudFrames = new FrameCollection<PointCloudFrame>();
 
         driveData.SpeedFrames = new FrameCollection<SingleValueFrame>()
         {
@@ -100,7 +101,7 @@ public class DataParser : MonoBehaviour
             positionFrames.Add(
                         new PositionFrame()
                         {
-                            Point = new FloatPoint() { X = record.X, Y = 0, Z = record.Y },
+                            Point = new FloatPoint() { X = record.Y, Y = record.Z, Z = -record.X },
                             Timestamp = record.Timestamp
                         });            
         }
@@ -127,7 +128,7 @@ public class DataParser : MonoBehaviour
 
     private PointCloudFrame ParsePointCloudFrame(string fileName)
     {
-        IEnumerable<CsvFrameEntity> records;
+        List<CsvFrameEntity> records;
 
         using (StreamReader reader = new StreamReader(fileName))
         {
@@ -136,65 +137,18 @@ public class DataParser : MonoBehaviour
                 records = csv.GetRecords<CsvFrameEntity>().ToList();
             }
         }
-        
-        List<FloatPoint> positionFrames = new List<FloatPoint>();
 
-        foreach (var record in records)
+        FloatPoint[] positionFrames = new FloatPoint[records.Count];
+
+        for (int i = 0; i < positionFrames.Length; i++)
         {
-            positionFrames.Add(new FloatPoint() { X = record.X, Y = record.Z, Z = record.Y });
+            var record = records[i];
+            positionFrames[i] = new FloatPoint() { X = record.X, Y = record.Z, Z = record.Y };
         }
 
         PointCloudFrame pointCloudFrame = new PointCloudFrame();
-        pointCloudFrame.Points = positionFrames.ToArray();
+        pointCloudFrame.Points = positionFrames;
         pointCloudFrame.Timestamp = records.First().Timestamp;
         return pointCloudFrame;
     }
-
-    //private PointCloudFrame ParsePointCloudFrame(string fileName)
-    //{
-    //    PointCloudFrame pointCloudFrame = new PointCloudFrame();
-    //    List<FloatPoint> positionFrames = new List<FloatPoint>();
-
-    //    float averageTimestamp = 0;
-    //    int timestampRecords = 0;
-
-    //    using (StreamReader reader = new StreamReader(fileName))
-    //    {
-    //        for (string l = reader.ReadLine(); l != null; l = reader.ReadLine())
-    //        {
-    //            string[] parts = l.Split(';', ',');
-    //            float[] xyz = new float[3];
-    //            float timestamp;
-    //            bool isValid = true;
-
-    //            for (int i = 3; i < 6; i++)
-    //            {
-    //                if (!float.TryParse(parts[i], NumberStyles.Any, CultureInfo.InvariantCulture, out xyz[i - 3]))
-    //                {
-    //                    isValid = false;
-    //                    break;
-    //                }
-    //            }
-
-    //            if (!float.TryParse(parts[11], NumberStyles.Any, CultureInfo.InvariantCulture, out timestamp))
-    //            {
-    //                continue;
-    //            }
-    //            else
-    //            {
-    //                averageTimestamp += timestamp;
-    //                timestampRecords++;
-    //            }
-
-    //            if (isValid)
-    //            {
-    //                positionFrames.Add(new FloatPoint() { X = xyz[0], Y = xyz[2], Z = xyz[1] });
-    //            }
-    //        }
-    //    }
-
-    //    pointCloudFrame.Points = positionFrames.ToArray();
-    //    pointCloudFrame.Timestamp = averageTimestamp / timestampRecords;
-    //    return pointCloudFrame;
-    //}
 }

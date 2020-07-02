@@ -1,4 +1,4 @@
-﻿public class FloatPoint
+﻿public struct FloatPoint
 {
     public float X;
 

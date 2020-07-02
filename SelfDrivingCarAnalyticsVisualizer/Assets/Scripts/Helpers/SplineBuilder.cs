@@ -23,7 +23,7 @@ public class SplineBuilder
         {
             while (t < i + 1)
             {
-                AddToSpline(spline, GetSplineAtTime(t));
+                AddToSpline(spline, GetPositionAtTime(t));
                 t += step;
             }
             if (spline[spline.Count - 1] != points[i + 1])
@@ -43,10 +43,16 @@ public class SplineBuilder
         }
     }
 
-    public Vector3 GetSplineAtTime(float t)
+    public Vector3 GetPositionAtTime(float t)
     {
         int splineIndex = Mathf.Min(Mathf.FloorToInt(t), coefficients.GetLength(0) - 1);
         return coefficients[splineIndex, 0] + coefficients[splineIndex, 1] * (t - splineIndex) + coefficients[splineIndex, 2] * (t - splineIndex) * (t - splineIndex) + coefficients[splineIndex, 3] * (t - splineIndex) * (t - splineIndex) * (t - splineIndex);
+    }
+
+    public Vector3 GetVelocityAtTime(float t)
+    {
+        int splineIndex = Mathf.Min(Mathf.FloorToInt(t), coefficients.GetLength(0) - 1);
+        return coefficients[splineIndex, 1] + coefficients[splineIndex, 2] * (t - splineIndex) + coefficients[splineIndex, 3] * (t - splineIndex) * (t - splineIndex);
     }
 
     private static Vector3[,] CalculateCoefficients(Vector3[] points)

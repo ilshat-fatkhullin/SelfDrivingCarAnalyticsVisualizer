@@ -15,6 +15,8 @@ public class EventBus: MonoBehaviour
 
     public CurrentWaypointChangeEvent OnCurrentWaypointChange;
 
+    public SplineBuilderInitializationEvent OnSplineBuilderInitialized;
+
     public FileLoadingEvent OnFileLoad;
 
     void Awake()
@@ -25,6 +27,7 @@ public class EventBus: MonoBehaviour
         OnWaypointsUpdate = new WaypointsUpdateEvent();
         OnCurrentWaypointChange = new CurrentWaypointChangeEvent();
         OnFileLoad = new FileLoadingEvent();
+        OnSplineBuilderInitialized = new SplineBuilderInitializationEvent();
     }
 }
 
@@ -39,3 +42,5 @@ public class WaypointsUpdateEvent : UnityEvent<Vector3[]> { }
 public class CurrentWaypointChangeEvent : UnityEvent<Vector3> { }
 
 public class FileLoadingEvent: UnityEvent<string> { }
+
+public class SplineBuilderInitializationEvent : UnityEvent<SplineBuilder> { }

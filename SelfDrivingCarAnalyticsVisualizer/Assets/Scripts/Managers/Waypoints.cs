@@ -32,7 +32,7 @@ public class Waypoints : MonoBehaviour
         }
 
         splineBuilder = new SplineBuilder(positions);
-
+        EventBus.Instance.OnSplineBuilderInitialized.Invoke(splineBuilder);
         EventBus.Instance.OnWaypointsUpdate.Invoke(splineBuilder.GetSplinePoints(splineStep));
         EventBus.Instance.OnCurrentWaypointChange.Invoke(positions[0]);
     }
@@ -40,6 +40,6 @@ public class Waypoints : MonoBehaviour
     private void OnTimelineValueChanged(float value)
     {
         float splineTime = _frames.GetSplineTimeAtNormalizedTime(value);
-        EventBus.Instance.OnCurrentWaypointChange.Invoke(splineBuilder.GetSplineAtTime(splineTime));
+        EventBus.Instance.OnCurrentWaypointChange.Invoke(splineBuilder.GetPositionAtTime(splineTime));
     }
 }
